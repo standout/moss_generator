@@ -38,15 +38,29 @@ RSpec.describe MossGenerator::StripeChargeRow do
     end
   end
 
+  describe '#vat_rate' do
+    subject(:vat_rate) { described_class.new(charge).vat_rate }
+
+    context 'when vat rate present for country code' do
+      it { is_expected.to eq(22) }
+    end
+
+    context 'when no vat rate for country code' do
+      before { charge['payment_method_details']['card']['country'] = 'CN' }
+
+      it { is_expected.to be(nil) }
+    end
+  end
+
   describe '#amount' do
     subject(:amount) { described_class.new(charge).amount }
 
-    it { is_expected.to eq(245_025) }
+    it { is_expected.to eq(248_687) }
   end
 
   describe '#vat_amount' do
     subject(:vat_amount) { described_class.new(charge).vat_amount }
 
-    it { is_expected.to eq(53_905.5) }
+    it { is_expected.to eq(54_711.14) }
   end
 end

@@ -3,9 +3,11 @@
 require 'moss_generator/vat_rate'
 
 module MossGenerator
-  # Fetches charge data from single Stripe charge
+  # Parse charge data from single Stripe charge
   class StripeChargeRow
     class NoConsumptionCountryError < StandardError; end
+
+    class NoVatRateForCountryError < StandardError; end
 
     attr_reader :charge
 
@@ -19,15 +21,12 @@ module MossGenerator
       raise NoConsumptionCountryError, "charge: #{charge}"
     end
 
-    # Integer
-    #
-    # Returns the amount with fee reductions
     def amount
-      charge.dig('balance_transaction', 'net')
+      charge.dig('balance_transaction', 'amount')
     end
 
     def vat_rate
-      MossGenerator::VatRate.for(country_code)
+      @vat_rate = MossGenerator::VatRate.for(country_code)
     end
 
     def vat_amount
