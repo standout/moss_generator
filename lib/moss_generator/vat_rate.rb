@@ -17,7 +17,8 @@ module MossGenerator
       end
 
       def vat_rates_path
-        'config/vat_rates.json'
+        File.join(File.dirname(File.expand_path(__FILE__)),
+                  '../../config/vat_rates.json')
       end
     end
   end

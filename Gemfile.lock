@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    moss_generator (0.1.0)
+    moss_generator (0.1.2)
 
 GEM
   remote: https://rubygems.org/
