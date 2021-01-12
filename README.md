@@ -20,7 +20,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Stripe
+```ruby
+# charges - array of charges in json-format from stripe
+# vat_number - the company's vat number
+# period - for which period of the year this report should be for
+# year - corresponding year for the period
+MossGenerator::Stripe.call(charges, vat_number, period, year)
+```
 
 ## Development
 
