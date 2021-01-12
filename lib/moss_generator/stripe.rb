@@ -52,16 +52,14 @@ module MossGenerator
 
     def build_charges_rows
       group_charges_rows.map do |country, charges|
+        next if country == 'SE' && turnover_country == 'SE'
+
         [turnover_country,
          country,
          format_to_two_decimals(charges.first.vat_rate),
          format_to_two_decimals(charges.sum(&:amount)),
          format_to_two_decimals(charges.sum(&:vat_amount))]
-      end
-    end
-
-    def build_row(charge)
-      [charge]
+      end.compact
     end
 
     def csv_options
