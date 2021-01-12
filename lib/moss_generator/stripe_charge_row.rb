@@ -7,6 +7,8 @@ module MossGenerator
   class StripeChargeRow
     class NoConsumptionCountryError < StandardError; end
 
+    class NoVatRateForCountryError < StandardError; end
+
     attr_reader :charge
 
     def initialize(charge)
@@ -24,7 +26,7 @@ module MossGenerator
     end
 
     def vat_rate
-      MossGenerator::VatRate.for(country_code)
+      @vat_rate = MossGenerator::VatRate.for(country_code)
     end
 
     def vat_amount
