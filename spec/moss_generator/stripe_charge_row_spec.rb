@@ -49,6 +49,34 @@ RSpec.describe MossGenerator::StripeChargeRow do
     it { is_expected.to eq(203_841.80327868852) }
   end
 
+  describe '#skippable' do
+    subject(:company) { described_class.new(charge).skippable? }
+
+    context 'when no vat number, status is succeded and refunded false' do
+      before { charge['metadata'] = nil }
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'when vat number is present' do
+      before { charge['metadata']['vat_number'] = 'CN248234901' }
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'when status is not succeeded' do
+      before { charge['status'] = 'processing' }
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'when refunded is true' do
+      before { charge['refunded'] = true }
+
+      it { is_expected.to be(true) }
+    end
+  end
+
   describe '#vat_amount' do
     subject(:vat_amount) { described_class.new(charge).vat_amount }
 

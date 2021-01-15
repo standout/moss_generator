@@ -45,8 +45,11 @@ module MossGenerator
 
     def group_charges_rows
       charges_rows = charges.map do |charge|
-        MossGenerator::StripeChargeRow.new(charge)
-      end
+        charge_row = MossGenerator::StripeChargeRow.new(charge)
+        next if charge_row.skippable?
+
+        charge_row
+      end.compact
       charges_rows.group_by(&:country_code)
     end
 

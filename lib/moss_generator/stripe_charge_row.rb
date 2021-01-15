@@ -33,7 +33,23 @@ module MossGenerator
       amount * vat_rate_calculatable_percent
     end
 
+    def skippable?
+      company? || not_completed? || refunded?
+    end
+
     private
+
+    def company?
+      charge.dig('metadata', 'vat_number').nil? ? false : true
+    end
+
+    def not_completed?
+      charge['status'] != 'succeeded'
+    end
+
+    def refunded?
+      charge['refunded']
+    end
 
     def amount_without_vat
       amount_with_vat * percent_without_vat
