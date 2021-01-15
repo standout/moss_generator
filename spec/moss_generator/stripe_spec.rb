@@ -12,8 +12,8 @@ RSpec.describe MossGenerator::Stripe do
     it 'returns a csv format string' do
       result = "MOSS_001;\r\n"\
                "SE556000016701;3;2020;\r\n"\
-               "SE;IT;22,00;248687,00;54711,14;\r\n"\
-               "SE;FR;20,00;495682,00;99136,40;\r\n"
+               "SE;IT;22,00;203841,80;44845,20;\r\n"\
+               "SE;FR;20,00;413068,33;82613,67;\r\n"\
 
       expect(call).to eq(result)
     end

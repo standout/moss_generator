@@ -22,7 +22,7 @@ module MossGenerator
     end
 
     def amount
-      charge.dig('balance_transaction', 'amount')
+      amount_without_vat
     end
 
     def vat_rate
@@ -33,15 +33,42 @@ module MossGenerator
       amount * vat_rate_calculatable_percent
     end
 
+    def skippable?
+      company? || not_completed? || refunded?
+    end
+
     private
+
+    def company?
+      charge.dig('metadata', 'vat_number').nil? ? false : true
+    end
+
+    def not_completed?
+      charge['status'] != 'succeeded'
+    end
+
+    def refunded?
+      charge['refunded']
+    end
+
+    def amount_without_vat
+      amount_with_vat * percent_without_vat
+    end
+
+    def amount_with_vat
+      charge.dig('balance_transaction', 'amount')
+    end
+
+    def percent_without_vat
+      1 / (vat_rate_calculatable_percent + 1)
+    end
 
     def vat_rate_calculatable_percent
       (vat_rate.to_f / 100)
     end
 
     def fetch_country_code
-      charge.dig('payment_method_details', 'card', 'country') ||
-        charge.dig('billing_details', 'address', 'country')
+      charge.dig('payment_method_details', 'card', 'country')
     end
   end
 end
