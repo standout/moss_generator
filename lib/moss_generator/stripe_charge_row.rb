@@ -52,8 +52,7 @@ module MossGenerator
     end
 
     def fetch_country_code
-      charge.dig('payment_method_details', 'card', 'country') ||
-        charge.dig('billing_details', 'address', 'country')
+      charge.dig('payment_method_details', 'card', 'country')
     end
   end
 end

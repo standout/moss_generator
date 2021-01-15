@@ -15,15 +15,6 @@ RSpec.describe MossGenerator::StripeChargeRow do
       it { is_expected.to eq('IT') }
     end
 
-    context 'when charge has billing details address country' do
-      before do
-        charge['payment_method_details'] = nil
-        charge['billing_details']['address']['country'] = 'DE'
-      end
-
-      it { is_expected.to eq('DE') }
-    end
-
     context 'when charge does not have country' do
       before do
         charge['payment_method_details'] = nil
