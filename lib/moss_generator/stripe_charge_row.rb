@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'moss_generator/vat_rate'
+require 'valvat/local'
 
 module MossGenerator
   # Parse charge data from single Stripe charge
@@ -40,7 +41,9 @@ module MossGenerator
     private
 
     def company?
-      charge.dig('metadata', 'vat_number').nil? ? false : true
+      return false if charge.dig('metadata', 'vat_number').nil?
+
+      Valvat::Syntax.validate(charge.dig('metadata', 'vat_number'))
     end
 
     def not_completed?

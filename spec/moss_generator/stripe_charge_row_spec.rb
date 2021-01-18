@@ -59,9 +59,19 @@ RSpec.describe MossGenerator::StripeChargeRow do
     end
 
     context 'when vat number is present' do
-      before { charge['metadata']['vat_number'] = 'CN248234901' }
+      before { charge['metadata']['vat_number'] = vat_number }
 
-      it { is_expected.to be(true) }
+      context 'when the vat number is valid' do
+        let(:vat_number) { 'DE345789003' }
+
+        it { is_expected.to be(true) }
+      end
+
+      context 'when the vat number is not valid' do
+        let(:vat_number) { 'DE345/89003' }
+
+        it { is_expected.to be(false) }
+      end
     end
 
     context 'when status is not succeeded' do
