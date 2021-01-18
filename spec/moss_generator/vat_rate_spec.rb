@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'moss_generator/vat_rate'
-require 'json'
 
 RSpec.describe MossGenerator::VatRate do
   let(:vat_rates) { JSON.parse(File.read('spec/fixtures/vat_rates.json')) }
@@ -22,9 +21,5 @@ RSpec.describe MossGenerator::VatRate do
 
       it { is_expected.to eq(20) }
     end
-  end
-
-  def stub_vat_rates_file
-    allow(MossGenerator::VatRate).to receive(:vat_rates).and_return(vat_rates)
   end
 end

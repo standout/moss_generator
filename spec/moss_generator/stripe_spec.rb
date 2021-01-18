@@ -9,6 +9,8 @@ RSpec.describe MossGenerator::Stripe do
   describe '.call' do
     subject(:call) { described_class.call(charges, 'SE556000016701', 3, 2020) }
 
+    before { stub_vat_rates_file }
+
     it 'returns a csv format string' do
       result = "MOSS_001;\r\n"\
                "SE556000016701;3;2020;\r\n"\

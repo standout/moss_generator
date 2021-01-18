@@ -32,6 +32,8 @@ RSpec.describe MossGenerator::StripeChargeRow do
   describe '#vat_rate' do
     subject(:vat_rate) { described_class.new(charge).vat_rate }
 
+    before { stub_vat_rates_file }
+
     context 'when vat rate present for country code' do
       it { is_expected.to eq(22) }
     end
@@ -47,6 +49,8 @@ RSpec.describe MossGenerator::StripeChargeRow do
     subject(:amount_without_vat) do
       described_class.new(charge).amount_without_vat
     end
+
+    before { stub_vat_rates_file }
 
     it { is_expected.to eq(2038.42) }
   end
@@ -91,6 +95,8 @@ RSpec.describe MossGenerator::StripeChargeRow do
 
   describe '#vat_amount' do
     subject(:vat_amount) { described_class.new(charge).vat_amount }
+
+    before { stub_vat_rates_file }
 
     it { is_expected.to eq(44_8.45) }
   end
