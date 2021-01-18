@@ -32,6 +32,8 @@ RSpec.describe MossGenerator::StripeChargeRow do
   describe '#vat_rate' do
     subject(:vat_rate) { described_class.new(charge).vat_rate }
 
+    before { stub_vat_rates_file }
+
     context 'when vat rate present for country code' do
       it { is_expected.to eq(22) }
     end
@@ -43,10 +45,26 @@ RSpec.describe MossGenerator::StripeChargeRow do
     end
   end
 
-  describe '#amount' do
-    subject(:amount) { described_class.new(charge).amount }
+  describe '#amount_without_vat' do
+    subject(:amount_without_vat) do
+      described_class.new(charge).amount_without_vat
+    end
 
-    it { is_expected.to eq(203_841.80327868852) }
+    before { stub_vat_rates_file }
+
+    context 'when currency is sek' do
+      it { is_expected.to eq(2038.42) }
+    end
+
+    context 'when currency is not in sek' do
+      before { charge['balance_transaction']['currency'] = 'usd' }
+
+      it 'raises not in sek error' do
+        expect { amount_without_vat }.to raise_error(
+          MossGenerator::StripeChargeRow::NotInSwedishKronorError
+        )
+      end
+    end
   end
 
   describe '#skippable' do
@@ -59,9 +77,19 @@ RSpec.describe MossGenerator::StripeChargeRow do
     end
 
     context 'when vat number is present' do
-      before { charge['metadata']['vat_number'] = 'CN248234901' }
+      before { charge['metadata']['vat_number'] = vat_number }
 
-      it { is_expected.to be(true) }
+      context 'when the vat number is valid' do
+        let(:vat_number) { 'DE345789003' }
+
+        it { is_expected.to be(true) }
+      end
+
+      context 'when the vat number is not valid' do
+        let(:vat_number) { 'DE345/89003' }
+
+        it { is_expected.to be(false) }
+      end
     end
 
     context 'when status is not succeeded' do
@@ -80,6 +108,8 @@ RSpec.describe MossGenerator::StripeChargeRow do
   describe '#vat_amount' do
     subject(:vat_amount) { described_class.new(charge).vat_amount }
 
-    it { is_expected.to eq(44_845.19672131148) }
+    before { stub_vat_rates_file }
+
+    it { is_expected.to eq(44_8.45) }
   end
 end

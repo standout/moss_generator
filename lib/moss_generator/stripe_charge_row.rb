@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'moss_generator/vat_rate'
+require 'money'
+require 'valvat/local'
 
 module MossGenerator
   # Parse charge data from single Stripe charge
@@ -8,6 +10,8 @@ module MossGenerator
     class NoConsumptionCountryError < StandardError; end
 
     class NoVatRateForCountryError < StandardError; end
+
+    class NotInSwedishKronorError < StandardError; end
 
     attr_reader :charge
 
@@ -21,8 +25,12 @@ module MossGenerator
       raise NoConsumptionCountryError, "charge: #{charge}"
     end
 
-    def amount
-      amount_without_vat
+    def amount_without_vat
+      Money.new(amount_with_vat * percent_without_vat, 'SEK').dollars.to_f
+    end
+
+    def amount_without_vat_cents
+      Money.new(amount_with_vat * percent_without_vat, 'SEK').cents
     end
 
     def vat_rate
@@ -30,7 +38,9 @@ module MossGenerator
     end
 
     def vat_amount
-      amount * vat_rate_calculatable_percent
+      Money.new(amount_without_vat_cents * vat_rate_calculatable_percent, 'SEK')
+           .dollars
+           .to_f
     end
 
     def skippable?
@@ -40,7 +50,9 @@ module MossGenerator
     private
 
     def company?
-      charge.dig('metadata', 'vat_number').nil? ? false : true
+      return false if charge.dig('metadata', 'vat_number').nil?
+
+      Valvat::Syntax.validate(charge.dig('metadata', 'vat_number'))
     end
 
     def not_completed?
@@ -51,12 +63,13 @@ module MossGenerator
       charge['refunded']
     end
 
-    def amount_without_vat
-      amount_with_vat * percent_without_vat
-    end
-
     def amount_with_vat
-      charge.dig('balance_transaction', 'amount')
+      balance_transaction = charge['balance_transaction']
+      currency = balance_transaction['currency']
+      return balance_transaction['amount'] if currency == 'sek'
+
+      raise NotInSwedishKronorError,
+            "balance_transaction: #{balance_transaction}"
     end
 
     def percent_without_vat

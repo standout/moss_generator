@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'moss_generator'
+require 'support/vat_rates'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
