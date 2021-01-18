@@ -11,6 +11,8 @@ module MossGenerator
 
     class NoVatRateForCountryError < StandardError; end
 
+    class NotInSwedishKronorError < StandardError; end
+
     attr_reader :charge
 
     def initialize(charge)
@@ -62,7 +64,12 @@ module MossGenerator
     end
 
     def amount_with_vat
-      charge.dig('balance_transaction', 'amount')
+      balance_transaction = charge['balance_transaction']
+      currency = balance_transaction['currency']
+      return balance_transaction['amount'] if currency == 'sek'
+
+      raise NotInSwedishKronorError,
+            "balance_transaction: #{balance_transaction}"
     end
 
     def percent_without_vat

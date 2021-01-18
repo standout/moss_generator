@@ -52,7 +52,19 @@ RSpec.describe MossGenerator::StripeChargeRow do
 
     before { stub_vat_rates_file }
 
-    it { is_expected.to eq(2038.42) }
+    context 'when currency is sek' do
+      it { is_expected.to eq(2038.42) }
+    end
+
+    context 'when currency is not in sek' do
+      before { charge['balance_transaction']['currency'] = 'usd' }
+
+      it 'raises not in sek error' do
+        expect { amount_without_vat }.to raise_error(
+          MossGenerator::StripeChargeRow::NotInSwedishKronorError
+        )
+      end
+    end
   end
 
   describe '#skippable' do
