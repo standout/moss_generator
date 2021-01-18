@@ -66,7 +66,7 @@ module MossGenerator
       [turnover_country,
        country,
        format_to_two_decimals(charges.first.vat_rate),
-       format_to_two_decimals(charges.sum(&:amount)),
+       format_to_two_decimals(charges.sum(&:amount_without_vat)),
        format_to_two_decimals(charges.sum(&:vat_amount))]
     end
 

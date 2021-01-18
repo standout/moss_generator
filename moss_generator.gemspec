@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['frdrkolsson']
   spec.email         = ['fredrik.olsson@standout.se']
 
-  spec.summary       = 'Skatteverket Mini One Stop Shop(MOSS) generator.'
+  spec.summary       = 'Skatteverket Mini One Stop Shop (MOSS) generator.'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/standout/moss_generator'
   spec.license       = 'MIT'
@@ -30,8 +30,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  # Uncomment to register a new dependency of your gem
-  # spec.add_dependency "example-gem", "~> 1.0"
+  # spec.add_dependency to register a new dependency of your gem
+  spec.add_dependency 'money', '~> 6.14'
   spec.add_dependency 'valvat', '~> 1.1'
 
   # For more information and examples about making a new gem, checkout our

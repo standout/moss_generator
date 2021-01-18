@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'moss_generator/vat_rate'
+require 'money'
 require 'valvat/local'
 
 module MossGenerator
@@ -22,8 +23,12 @@ module MossGenerator
       raise NoConsumptionCountryError, "charge: #{charge}"
     end
 
-    def amount
-      amount_without_vat
+    def amount_without_vat
+      Money.new(amount_with_vat * percent_without_vat, 'SEK').dollars.to_f
+    end
+
+    def amount_without_vat_cents
+      Money.new(amount_with_vat * percent_without_vat, 'SEK').cents
     end
 
     def vat_rate
@@ -31,7 +36,9 @@ module MossGenerator
     end
 
     def vat_amount
-      amount * vat_rate_calculatable_percent
+      Money.new(amount_without_vat_cents * vat_rate_calculatable_percent, 'SEK')
+           .dollars
+           .to_f
     end
 
     def skippable?
@@ -52,10 +59,6 @@ module MossGenerator
 
     def refunded?
       charge['refunded']
-    end
-
-    def amount_without_vat
-      amount_with_vat * percent_without_vat
     end
 
     def amount_with_vat

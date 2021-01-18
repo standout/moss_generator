@@ -43,10 +43,12 @@ RSpec.describe MossGenerator::StripeChargeRow do
     end
   end
 
-  describe '#amount' do
-    subject(:amount) { described_class.new(charge).amount }
+  describe '#amount_without_vat' do
+    subject(:amount_without_vat) do
+      described_class.new(charge).amount_without_vat
+    end
 
-    it { is_expected.to eq(203_841.80327868852) }
+    it { is_expected.to eq(2038.42) }
   end
 
   describe '#skippable' do
@@ -90,6 +92,6 @@ RSpec.describe MossGenerator::StripeChargeRow do
   describe '#vat_amount' do
     subject(:vat_amount) { described_class.new(charge).vat_amount }
 
-    it { is_expected.to eq(44_845.19672131148) }
+    it { is_expected.to eq(44_8.45) }
   end
 end
