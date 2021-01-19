@@ -65,6 +65,7 @@ module MossGenerator
 
     def amount_with_vat
       return charge['amount'] if charge['currency'].casecmp?('eur')
+      return if skippable?
 
       raise NotInEuroError, "charge: #{charge}"
     end
