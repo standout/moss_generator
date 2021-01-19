@@ -75,7 +75,7 @@ module MossGenerator
     end
 
     def row_separator
-      ";\r\n"
+      ";\n"
     end
 
     def column_separator

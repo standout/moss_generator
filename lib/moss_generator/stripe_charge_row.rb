@@ -11,7 +11,7 @@ module MossGenerator
 
     class NoVatRateForCountryError < StandardError; end
 
-    class NotInSwedishKronorError < StandardError; end
+    class NotInEuroError < StandardError; end
 
     attr_reader :charge
 
@@ -26,11 +26,11 @@ module MossGenerator
     end
 
     def amount_without_vat
-      Money.new(amount_with_vat * percent_without_vat, 'SEK').dollars.to_f
+      Money.new(amount_with_vat * percent_without_vat).dollars.to_f
     end
 
     def amount_without_vat_cents
-      Money.new(amount_with_vat * percent_without_vat, 'SEK').cents
+      Money.new(amount_with_vat * percent_without_vat).cents
     end
 
     def vat_rate
@@ -38,7 +38,7 @@ module MossGenerator
     end
 
     def vat_amount
-      Money.new(amount_without_vat_cents * vat_rate_calculatable_percent, 'SEK')
+      Money.new(amount_without_vat_cents * vat_rate_calculatable_percent)
            .dollars
            .to_f
     end
@@ -64,12 +64,10 @@ module MossGenerator
     end
 
     def amount_with_vat
-      balance_transaction = charge['balance_transaction']
-      currency = balance_transaction['currency']
-      return balance_transaction['amount'] if currency == 'sek'
+      return charge['amount'] if charge['currency'].casecmp?('eur')
+      return if skippable?
 
-      raise NotInSwedishKronorError,
-            "balance_transaction: #{balance_transaction}"
+      raise NotInEuroError, "charge: #{charge}"
     end
 
     def percent_without_vat
