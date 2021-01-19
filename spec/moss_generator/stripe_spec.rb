@@ -12,10 +12,10 @@ RSpec.describe MossGenerator::Stripe do
     before { stub_vat_rates_file }
 
     it 'returns a csv format string' do
-      result = "MOSS_001;\r\n"\
-               "SE556000016701;3;2020;\r\n"\
-               "SE;IT;22,00;205,90;45,30;\r\n"\
-               "SE;FR;20,00;415,00;83,00;\r\n"\
+      result = "MOSS_001;\n"\
+               "SE556000016701;3;2020;\n"\
+               "SE;IT;22,00;205,90;45,30;\n"\
+               "SE;FR;20,00;415,00;83,00;\n"\
 
       expect(call).to eq(result)
     end
