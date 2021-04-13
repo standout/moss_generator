@@ -3,6 +3,7 @@
 require 'moss_generator/vat_rate'
 require 'money'
 require 'valvat/local'
+require 'countries'
 
 module MossGenerator
   # Parse charge data from single Stripe charge
@@ -44,7 +45,12 @@ module MossGenerator
     end
 
     def skippable?
-      company? || not_completed? || refunded?
+      not_completed? ||
+        company? ||
+        fetch_country_code.nil? ||
+        sold_outside_of_eu? ||
+        swedish_charge? ||
+        refunded?
     end
 
     private
@@ -53,6 +59,14 @@ module MossGenerator
       return false if charge.dig('metadata', 'vat_number').nil?
 
       Valvat::Syntax.validate(charge.dig('metadata', 'vat_number'))
+    end
+
+    def sold_outside_of_eu?
+      ISO3166::Country.new(fetch_country_code).in_eu? ? false : true
+    end
+
+    def swedish_charge?
+      fetch_country_code.casecmp?('SE')
     end
 
     def not_completed?
