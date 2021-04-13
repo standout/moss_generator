@@ -8,17 +8,18 @@ module MossGenerator
   class Stripe
     class NoTurnoverCountryError < StandardError; end
 
-    attr_reader :charges, :vat_number, :period, :year
+    attr_reader :charges, :vat_number, :period, :year, :rates
 
-    def initialize(charges, vat_number, period, year)
+    def initialize(charges, vat_number, period, year, rates)
       @charges = charges
       @vat_number = vat_number
       @period = period
       @year = year
+      @rates = rates
     end
 
-    def self.call(charges, vat_number, period, year)
-      new(charges, vat_number, period, year).call
+    def self.call(charges, vat_number, period, year, rates)
+      new(charges, vat_number, period, year, rates).call
     end
 
     def call
@@ -45,7 +46,7 @@ module MossGenerator
 
     def group_charges_rows
       charges_rows = charges.map do |charge|
-        charge_row = MossGenerator::StripeChargeRow.new(charge)
+        charge_row = MossGenerator::StripeChargeRow.new(charge, rates)
         next if charge_row.skippable?
 
         charge_row

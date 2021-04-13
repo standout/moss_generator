@@ -7,7 +7,13 @@ RSpec.describe MossGenerator::Stripe do
   let(:charges) { JSON.parse(File.read('spec/fixtures/stripe_charges.json')) }
 
   describe '.call' do
-    subject(:call) { described_class.call(charges, 'SE556000016701', 3, 2020) }
+    subject(:call) do
+      described_class.call(charges,
+                           'SE556000016701',
+                           3,
+                           2020,
+                           read_exchange_rates)
+    end
 
     before { stub_vat_rates_file }
 

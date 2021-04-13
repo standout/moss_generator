@@ -12,12 +12,13 @@ module MossGenerator
 
     class NoVatRateForCountryError < StandardError; end
 
-    class NotInEuroError < StandardError; end
+    class NoExchangeRateForCurrencyOrDateError < StandardError; end
 
-    attr_reader :charge
+    attr_reader :charge, :rates
 
-    def initialize(charge)
+    def initialize(charge, rates)
       @charge = charge
+      @rates = rates
     end
 
     def country_code
@@ -77,13 +78,6 @@ module MossGenerator
       charge['refunded']
     end
 
-    def amount_with_vat
-      return charge['amount'] if charge['currency'].casecmp?('eur')
-      return if skippable?
-
-      raise NotInEuroError, "charge: #{charge}"
-    end
-
     def percent_without_vat
       1 / (vat_rate_calculatable_percent + 1)
     end
@@ -94,6 +88,29 @@ module MossGenerator
 
     def fetch_country_code
       charge.dig('payment_method_details', 'card', 'country')
+    end
+
+    def amount_with_vat
+      return if skippable?
+      return charge['amount'] if charge['currency'].casecmp?('eur')
+
+      exchanged_amount = calculate_amount_from_rate
+      return exchanged_amount unless exchanged_amount.nil?
+
+      raise NoExchangeRateForCurrencyOrDateError, "charge: #{charge}"
+    end
+
+    def calculate_amount_from_rate
+      # Have to reverse the rate. The base rate is in EUR, so if we have a rate
+      # to SEK, the rate will represent the rate from EUR to SEK, but we need
+      # the other way around.
+      date = Time.at(charge['created']).to_date.to_s
+      currency = charge['currency'].upcase
+      rate = rates.dig(date, currency)
+      return if rate.nil?
+
+      reversed_rate = 1 / rate
+      charge['amount'] * reversed_rate
     end
   end
 end
