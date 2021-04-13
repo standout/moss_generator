@@ -3,6 +3,7 @@
 require 'moss_generator/vat_rate'
 require 'money'
 require 'valvat/local'
+require 'countries'
 
 module MossGenerator
   # Parse charge data from single Stripe charge
@@ -11,12 +12,13 @@ module MossGenerator
 
     class NoVatRateForCountryError < StandardError; end
 
-    class NotInEuroError < StandardError; end
+    class NoExchangeRateForCurrencyOrDateError < StandardError; end
 
-    attr_reader :charge
+    attr_reader :charge, :rates
 
-    def initialize(charge)
+    def initialize(charge, rates)
       @charge = charge
+      @rates = rates
     end
 
     def country_code
@@ -44,7 +46,12 @@ module MossGenerator
     end
 
     def skippable?
-      company? || not_completed? || refunded?
+      not_completed? ||
+        company? ||
+        fetch_country_code.nil? ||
+        sold_outside_of_eu? ||
+        swedish_charge? ||
+        refunded?
     end
 
     private
@@ -55,19 +62,20 @@ module MossGenerator
       Valvat::Syntax.validate(charge.dig('metadata', 'vat_number'))
     end
 
+    def sold_outside_of_eu?
+      ISO3166::Country.new(fetch_country_code).in_eu? ? false : true
+    end
+
+    def swedish_charge?
+      fetch_country_code.casecmp?('SE')
+    end
+
     def not_completed?
       charge['status'] != 'succeeded'
     end
 
     def refunded?
       charge['refunded']
-    end
-
-    def amount_with_vat
-      return charge['amount'] if charge['currency'].casecmp?('eur')
-      return if skippable?
-
-      raise NotInEuroError, "charge: #{charge}"
     end
 
     def percent_without_vat
@@ -80,6 +88,29 @@ module MossGenerator
 
     def fetch_country_code
       charge.dig('payment_method_details', 'card', 'country')
+    end
+
+    def amount_with_vat
+      return if skippable?
+      return charge['amount'] if charge['currency'].casecmp?('eur')
+
+      exchanged_amount = calculate_amount_from_rate
+      return exchanged_amount unless exchanged_amount.nil?
+
+      raise NoExchangeRateForCurrencyOrDateError, "charge: #{charge}"
+    end
+
+    def calculate_amount_from_rate
+      # Have to reverse the rate. The base rate is in EUR, so if we have a rate
+      # to SEK, the rate will represent the rate from EUR to SEK, but we need
+      # the other way around.
+      date = Time.at(charge['created']).to_date.to_s
+      currency = charge['currency'].upcase
+      rate = rates.dig(date, currency)
+      return if rate.nil?
+
+      reversed_rate = 1 / rate
+      charge['amount'] * reversed_rate
     end
   end
 end

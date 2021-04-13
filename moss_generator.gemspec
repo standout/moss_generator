@@ -31,8 +31,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   # spec.add_dependency to register a new dependency of your gem
+  spec.add_dependency 'countries', '~> 3.1'
   spec.add_dependency 'money', '~> 6.14'
   spec.add_dependency 'valvat', '~> 1.1'
+
+  spec.add_development_dependency 'pry-byebug'
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
