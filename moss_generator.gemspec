@@ -35,6 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'money', '~> 6.14'
   spec.add_dependency 'valvat', '~> 1.1'
 
+  spec.add_development_dependency 'pry-byebug'
+
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 end
