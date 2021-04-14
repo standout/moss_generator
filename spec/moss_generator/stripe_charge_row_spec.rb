@@ -47,6 +47,36 @@ RSpec.describe MossGenerator::StripeChargeRow do
 
       it { is_expected.to be(nil) }
     end
+
+    context 'with special_vat_rate_for_2021_quarter_one' do
+      context 'when country is not Ireland' do
+        before { charge['payment_method_details']['card']['country'] = 'SE' }
+
+        it { is_expected.to be(25) }
+      end
+
+      context 'when country is Ireland' do
+        before { charge['payment_method_details']['card']['country'] = 'IE' }
+
+        context 'when date is before 2021-03-01' do
+          before { charge['created'] = Time.new(2021, 2, 22).to_i }
+
+          it { is_expected.to be(21) }
+        end
+
+        context 'when date is on 2021-03-01' do
+          before { charge['created'] = Time.new(2021, 3, 1).to_i }
+
+          it { is_expected.to be(23) }
+        end
+
+        context 'when date is after 2021-03-01' do
+          before { charge['created'] = Time.new(2021, 3, 24).to_i }
+
+          it { is_expected.to be(23) }
+        end
+      end
+    end
   end
 
   describe '#amount_without_vat' do
