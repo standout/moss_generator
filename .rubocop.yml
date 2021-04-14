@@ -15,4 +15,4 @@ Metrics/BlockLength:
     - 'spec/**/*'
 
 RSpec/NestedGroups:
-  Max: 4
+  Max: 5

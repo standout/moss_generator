@@ -25,5 +25,23 @@ RSpec.describe MossGenerator::Stripe do
 
       expect(call).to eq(result)
     end
+
+    context 'with special_vat_rate_for_2021_quarter_one' do
+      subject { true }
+
+      let(:charges) { JSON.parse(File.read(special_path)) }
+      let(:special_path) do
+        'spec/fixtures/stripe_charges_special_vat_rate_2021_quarter_one.json'
+      end
+
+      it 'returns a csv with same country with different vat on two rows' do
+        result = "MOSS_001;\r\n"\
+                 "SE556000016701;3;2020;\r\n"\
+                 "SE;IE;23,00;204,23;46,97;\r\n"\
+                 "SE;IE;21,00;205,79;43,22;\r\n"\
+
+        expect(call).to eq(result)
+      end
+    end
   end
 end

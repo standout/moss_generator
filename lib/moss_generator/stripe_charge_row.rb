@@ -36,7 +36,7 @@ module MossGenerator
     end
 
     def vat_rate
-      @vat_rate = MossGenerator::VatRate.for(country_code)
+      @vat_rate = special_vat_rate_for_2021_quarter_one
     end
 
     def vat_amount
@@ -55,6 +55,17 @@ module MossGenerator
     end
 
     private
+
+    def special_vat_rate_for_2021_quarter_one
+      if fetch_country_code.casecmp?('IE')
+        changeover_day = Date.parse('2021-03-01').to_time
+        return 23 if Time.at(charge['created']) >= changeover_day
+
+        21
+      else
+        MossGenerator::VatRate.for(country_code)
+      end
+    end
 
     def company?
       return false if charge.dig('metadata', 'vat_number').nil?
