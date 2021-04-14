@@ -130,7 +130,7 @@
   },
   "DE": {
     "country_name": "Germany",
-    "standard_rate": 19,
+    "standard_rate": 16,
     "reduced_rates": {
       "foodstuffs": 7,
       "books": 7,
@@ -364,6 +364,20 @@
     "reduced_rates": {
       "foodstuffs": 12,
       "books": 6
+    }
+  },
+  "GB": {
+    "country_name": "United Kingdom",
+    "standard_rate": 20,
+    "reduced_rates": {
+      "property renovations": 5,
+      "foodstuffs": 0,
+      "books": 0,
+      "pharmaceuticals": 0,
+      "medical": 0,
+      "passenger transport": 0,
+      "newspapers": 0,
+      "childrens clothing": 0
     }
   }
 }
