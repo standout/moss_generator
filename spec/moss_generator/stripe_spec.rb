@@ -12,16 +12,17 @@ RSpec.describe MossGenerator::Stripe do
                            'SE556000016701',
                            3,
                            2020,
-                           read_exchange_rates)
+                           read_exchange_rates,
+                           'GOODS')
     end
 
     before { stub_vat_rates_file }
 
     it 'returns a csv format string' do
-      result = "MOSS_001;\r\n"\
+      result = "OSS_001;\r\n"\
                "SE556000016701;3;2020;\r\n"\
-               "SE;IT;22,00;205,90;45,30;\r\n"\
-               "SE;FR;20,00;415,00;83,00;\r\n"\
+               "SE;IT;22,00;205,90;45,30;GOODS;\r\n"\
+               "SE;FR;20,00;415,00;83,00;GOODS;\r\n"\
 
       expect(call).to eq(result)
     end
@@ -35,10 +36,10 @@ RSpec.describe MossGenerator::Stripe do
       end
 
       it 'returns a csv with same country with different vat on two rows' do
-        result = "MOSS_001;\r\n"\
+        result = "OSS_001;\r\n"\
                  "SE556000016701;3;2020;\r\n"\
-                 "SE;IE;23,00;204,23;46,97;\r\n"\
-                 "SE;IE;21,00;205,79;43,22;\r\n"\
+                 "SE;IE;23,00;204,23;46,97;GOODS;\r\n"\
+                 "SE;IE;21,00;205,79;43,22;GOODS;\r\n"\
 
         expect(call).to eq(result)
       end

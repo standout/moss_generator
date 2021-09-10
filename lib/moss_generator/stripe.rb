@@ -8,18 +8,19 @@ module MossGenerator
   class Stripe
     class NoTurnoverCountryError < StandardError; end
 
-    attr_reader :charges, :vat_number, :period, :year, :rates
+    attr_reader :charges, :vat_number, :period, :year, :rates, :sale_type
 
-    def initialize(charges, vat_number, period, year, rates)
+    def initialize(charges, vat_number, period, year, rates, sale_type)
       @charges = charges
       @vat_number = vat_number
       @period = period
       @year = year
       @rates = rates
+      @sale_type = sale_type
     end
 
-    def self.call(charges, vat_number, period, year, rates)
-      new(charges, vat_number, period, year, rates).call
+    def self.call(charges, vat_number, period, year, rates, sale_type)
+      new(charges, vat_number, period, year, rates, sale_type).call
     end
 
     def call
@@ -33,7 +34,7 @@ module MossGenerator
     private
 
     def first_row
-      ['MOSS_001']
+      ['OSS_001']
     end
 
     def second_row
@@ -70,7 +71,8 @@ module MossGenerator
        country,
        format_to_two_decimals(vat),
        format_to_two_decimals(charges.sum(&:amount_without_vat)),
-       format_to_two_decimals(charges.sum(&:vat_amount))]
+       format_to_two_decimals(charges.sum(&:vat_amount)),
+       sale_type]
     end
 
     def csv_options
