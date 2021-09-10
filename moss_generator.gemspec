@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['frdrkolsson']
   spec.email         = ['fredrik.olsson@standout.se']
 
-  spec.summary       = 'Skatteverket Mini One Stop Shop (MOSS) generator.'
+  spec.summary       = 'Skatteverket One Stop Shop (OSS) generator.'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/standout/moss_generator'
   spec.license       = 'MIT'
