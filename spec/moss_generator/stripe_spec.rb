@@ -27,6 +27,20 @@ RSpec.describe MossGenerator::Stripe do
       expect(call).to eq(result)
     end
 
+    context 'when country is greece (GR)' do
+      let(:charges) do
+        JSON.parse(File.read('spec/fixtures/stripe_charges_from_greece.json'))
+      end
+
+      it 'returns a csv format string with country code EL' do
+        result = "OSS_001;\r\n"\
+                 "SE556000016701;3;2020;\r\n"\
+                 "SE;EL;24,00;202,58;48,62;GOODS;\r\n"\
+
+        expect(call).to eq(result)
+      end
+    end
+
     context 'with special_vat_rate_for_2021_quarter_one' do
       subject { true }
 

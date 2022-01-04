@@ -68,7 +68,7 @@ module MossGenerator
 
     def country_row(country, charges, vat)
       [turnover_country,
-       country,
+       country_code(country),
        format_to_two_decimals(vat),
        format_to_two_decimals(charges.sum(&:amount_without_vat)),
        format_to_two_decimals(charges.sum(&:vat_amount)),
@@ -85,6 +85,12 @@ module MossGenerator
 
     def column_separator
       ';'
+    end
+
+    def country_code(country)
+      return 'EL' if country == 'GR'
+
+      country
     end
 
     def format_to_two_decimals(number)
