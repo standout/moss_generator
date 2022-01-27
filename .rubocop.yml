@@ -10,6 +10,9 @@ AllCops:
 Layout/LineLength:
   Max: 80
 
+Metrics/ClassLength:
+  Max: 120
+
 Metrics/ParameterLists:
   Max: 6
 
@@ -18,4 +21,4 @@ Metrics/BlockLength:
     - 'spec/**/*'
 
 RSpec/NestedGroups:
-  Max: 5
+  Max: 6
