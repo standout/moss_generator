@@ -15,14 +15,130 @@ RSpec.describe MossGenerator::StripeChargeRow do
   describe '#country_code' do
     subject(:country_code) { stripe_charge_row.country_code }
 
-    context 'when charge has payment method details card country' do
-      it { is_expected.to eq('IT') }
+    context 'when source is present' do
+      before do
+        charge['source'] = { 'type' => 'card', 'card' => { 'country' => 'SE' } }
+      end
+
+      context 'when type is set as object' do
+        before do
+          charge['source'] = { 'object' => 'card',
+                               'card' => { 'country' => 'SE' } }
+        end
+
+        context 'when country is set' do
+          it { is_expected.to eq('SE') }
+        end
+      end
+
+      context 'when type is card' do
+        context 'when country is set' do
+          it { is_expected.to eq('SE') }
+        end
+      end
+
+      context 'when type is not card' do
+        before do
+          charge['source'] = { 'type' => 'sepa_debit',
+                               'sepa_debit' => { 'country' => 'SE' } }
+        end
+
+        context 'when country is set' do
+          it { is_expected.to eq('SE') }
+        end
+      end
+
+      context 'when country is not set' do
+        before do
+          charge['source'] = { 'type' => 'card',
+                               'card' => { 'address_country' => 'SE' } }
+        end
+
+        context 'when country is set in address_country' do
+          it { is_expected.to eq('SE') }
+        end
+      end
+
+      context 'when payment method does not contain country information' do
+        context 'when source has owner set' do
+          before do
+            charge['source'] = { 'type' => 'card', 'card' => {} }
+            charge['source'] =
+              { 'owner' => { 'address' => { 'country' => 'SE' } } }
+          end
+
+          it { is_expected.to eq('SE') }
+        end
+
+        context 'when source does not have a owner set' do
+          context 'when shipping address contain country' do
+            before do
+              charge['source'] = { 'type' => 'card', 'card' => {} }
+              charge['payment_method_details']['card'] = nil
+              charge['shipping'] = { 'address' => { 'country' => 'SE' } }
+            end
+
+            it { is_expected.to eq('SE') }
+          end
+        end
+      end
     end
 
-    context 'when charge does not have country' do
+    context 'when source is not set' do
+      context 'when payment method contains country information' do
+        context 'when type is card' do
+          context 'when country is set' do
+            it { is_expected.to eq('IT') }
+          end
+        end
+
+        context 'when type is not card' do
+          before do
+            charge['payment_method_details'] = {
+              'type' => 'sepa_debit',
+              'sepa_debit' => { 'country' => 'SE' }
+            }
+          end
+
+          context 'when country is set' do
+            it { is_expected.to eq('SE') }
+          end
+        end
+
+        context 'when country is not set' do
+          before do
+            charge['payment_method_details']['card']['country'] = nil
+            charge['payment_method_details']['card']['address_country'] = 'SE'
+          end
+
+          context 'when country is set in address_country' do
+            it { is_expected.to eq('SE') }
+          end
+        end
+      end
+
+      context 'when payment method does not contain country information' do
+        before do
+          charge['payment_method_details']['card']['country'] = nil
+          charge['payment_method_details']['card']['address_country'] = nil
+        end
+
+        context 'when shipping address contain country' do
+          before do
+            charge['shipping'] = { 'address' => { 'country' => 'SE' } }
+          end
+
+          it { is_expected.to eq('SE') }
+        end
+      end
+    end
+
+    context 'when no country information is found' do
       before do
+        charge['source'] = nil
         charge['payment_method_details'] = nil
         charge['billing_details'] = nil
+        charge['shipping'] = nil
       end
 
       it 'raises no consumption country error' do
@@ -168,7 +284,7 @@ RSpec.describe MossGenerator::StripeChargeRow do
       it { is_expected.to be(true) }
     end
 
-    context 'when the charge is made in Sweden ' do
+    context 'when the charge is made in Sweden' do
       before { charge['payment_method_details']['card']['country'] = 'SE' }
 
       it { is_expected.to be(true) }

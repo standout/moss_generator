@@ -98,7 +98,37 @@ module MossGenerator
     end
 
     def fetch_country_code
-      charge.dig('payment_method_details', 'card', 'country')
+      source_country || payment_method_country || fallback_country
+    end
+
+    def source_country
+      return source_owner_country if source_type.nil?
+
+      charge.dig('source', source_type, 'country') ||
+        charge.dig('source', source_type, 'address_country')
+    end
+
+    def payment_method_country
+      return if payment_type.nil?
+
+      charge.dig('payment_method_details', payment_type, 'country') ||
+        charge.dig('payment_method_details', payment_type, 'address_country')
+    end
+
+    def source_type
+      charge.dig('source', 'type') || charge.dig('source', 'object')
+    end
+
+    def source_owner_country
+      charge.dig('source', 'owner', 'address', 'country')
+    end
+
+    def payment_type
+      charge.dig('payment_method_details', 'type')
+    end
+
+    def fallback_country
+      charge.dig('shipping', 'address', 'country')
     end
 
     def amount_with_vat
