@@ -48,6 +48,23 @@ Vat rates currently needs to be updated manually in `config/vat_rates.json`.
 
 Rates can also be found on the official website of the European Union [https://europa.eu/youreurope/business/taxation/vat/vat-rules-rates/index_en.htm#shortcut-8](https://europa.eu/youreurope/business/taxation/vat/vat-rules-rates/index_en.htm#shortcut-8), updates two times a year.
 
+### Custom VAT rates
+
+If standard VAT rates is not enough a custom VAT service can be written and used instead. To create a VAT service that change VAT for a country with a standard VAT rates fallback this one could be used.
+
+```ruby
+class CustomVat
+# Insane 50.5% VAT for France
+  def for(country_code)
+    return 50.5 if country_code == 'FR'
+
+    MossGenerator::VatRate.for(country_code)
+  end
+end
+
+csv_string = MossGenerator::Stripe.call(charges, vat_number, period, year, rates, 'SERVICES', CustomVat.new)
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/standout/moss_generator.

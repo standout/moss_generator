@@ -14,11 +14,12 @@ module MossGenerator
 
     class NoExchangeRateForCurrencyOrDateError < StandardError; end
 
-    attr_reader :charge, :rates
+    attr_reader :charge, :rates, :vat_rate_service
 
-    def initialize(charge, rates)
+    def initialize(charge, rates, vat_rate_service = MossGenerator::VatRate)
       @charge = charge
       @rates = rates
+      @vat_rate_service = vat_rate_service
     end
 
     def country_code
@@ -63,7 +64,7 @@ module MossGenerator
 
         21
       else
-        MossGenerator::VatRate.for(country_code)
+        vat_rate_service.for(country_code)
       end
     end
 

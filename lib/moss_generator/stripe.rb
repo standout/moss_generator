@@ -8,23 +8,33 @@ module MossGenerator
   class Stripe
     class NoTurnoverCountryError < StandardError; end
 
-    attr_reader :charges, :vat_number, :period, :year, :rates, :sale_type
+    attr_reader :charges, :vat_number, :period, :year, :rates, :sale_type,
+                :vat_rate_service
 
-    def initialize(charges, vat_number, period, year, rates, sale_type)
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(charges,
+                   vat_number,
+                   period,
+                   year,
+                   rates,
+                   sale_type,
+                   vat_rate_service = MossGenerator::VatRate)
       @charges = charges
       @vat_number = vat_number
       @period = period
       @year = year
       @rates = rates
       @sale_type = sale_type
+      @vat_rate_service = vat_rate_service
     end
+    # rubocop:enable Metrics/ParameterLists
 
-    def self.call(charges, vat_number, period, year, rates, sale_type)
-      new(charges, vat_number, period, year, rates, sale_type).call
+    def self.call(*args)
+      new(*args).call
     end
 
     def call
-      CSV.generate(csv_options) do |csv|
+      CSV.generate(**csv_options) do |csv|
         csv << first_row
         csv << second_row
         generate_charges_rows(csv)
@@ -47,7 +57,8 @@ module MossGenerator
 
     def group_charges_rows
       charges_rows = charges.map do |charge|
-        charge_row = MossGenerator::StripeChargeRow.new(charge, rates)
+        charge_row = MossGenerator::StripeChargeRow.new(charge, rates,
+                                                        vat_rate_service)
         next if charge_row.skippable?
 
         charge_row
