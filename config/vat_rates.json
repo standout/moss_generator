@@ -170,7 +170,7 @@
   },
   "IE": {
     "country_name": "Ireland",
-    "standard_rate": 21,
+    "standard_rate": 23,
     "reduced_rates": {
       "medical": 13.5,
       "newspapers": 9,
