@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency to register a new dependency of your gem
   spec.add_dependency 'countries', '~> 4.0'
   spec.add_dependency 'money', '~> 6.14'
+  spec.add_dependency 'rexml', '~> 3.2'
   spec.add_dependency 'valvat', '~> 1.1'
 
   # For more information and examples about making a new gem, checkout our

@@ -2,7 +2,7 @@
 
 require 'moss_generator/vat_rate'
 require 'money'
-require 'valvat/local'
+require 'valvat'
 require 'countries'
 
 module MossGenerator
