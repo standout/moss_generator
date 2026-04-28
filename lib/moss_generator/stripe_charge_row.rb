@@ -75,7 +75,7 @@ module MossGenerator
     end
 
     def sold_outside_of_eu?
-      ISO3166::Country.new(fetch_country_code).in_eu? ? false : true
+      !ISO3166::Country.new(fetch_country_code).in_eu?
     end
 
     def swedish_charge?

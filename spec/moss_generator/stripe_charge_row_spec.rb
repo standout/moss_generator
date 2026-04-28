@@ -161,7 +161,7 @@ RSpec.describe MossGenerator::StripeChargeRow do
     context 'when no vat rate for country code' do
       before { charge['payment_method_details']['card']['country'] = 'CN' }
 
-      it { is_expected.to be(nil) }
+      it { is_expected.to be_nil }
     end
 
     context 'with special_vat_rate_for_2021_quarter_one' do

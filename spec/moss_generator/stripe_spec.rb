@@ -21,10 +21,10 @@ RSpec.describe MossGenerator::Stripe do
     before { stub_vat_rates_file }
 
     it 'returns a csv format string' do
-      result = "OSS_001;\r\n"\
-               "SE556000016701;3;2020;\r\n"\
-               "SE;IT;22,00;205,90;45,30;GOODS;\r\n"\
-               "SE;FR;20,00;415,00;83,00;GOODS;\r\n"\
+      result = "OSS_001;\r\n" \
+               "SE556000016701;3;2020;\r\n" \
+               "SE;IT;22,00;205,90;45,30;GOODS;\r\n" \
+               "SE;FR;20,00;415,00;83,00;GOODS;\r\n" \
 
       expect(call).to eq(result)
     end
@@ -44,10 +44,10 @@ RSpec.describe MossGenerator::Stripe do
       end
 
       it 'returns a csv with VAT rates from service' do
-        result = "OSS_001;\r\n"\
-                 "SE556000016701;3;2020;\r\n"\
-                 "SE;IT;3,12;243,60;7,60;GOODS;\r\n"\
-                 "SE;FR;32,00;377,28;120,72;GOODS;\r\n"\
+        result = "OSS_001;\r\n" \
+                 "SE556000016701;3;2020;\r\n" \
+                 "SE;IT;3,12;243,60;7,60;GOODS;\r\n" \
+                 "SE;FR;32,00;377,28;120,72;GOODS;\r\n" \
 
         expect(call).to eq(result)
       end
@@ -59,9 +59,9 @@ RSpec.describe MossGenerator::Stripe do
       end
 
       it 'returns a csv format string with country code EL' do
-        result = "OSS_001;\r\n"\
-                 "SE556000016701;3;2020;\r\n"\
-                 "SE;EL;24,00;202,58;48,62;GOODS;\r\n"\
+        result = "OSS_001;\r\n" \
+                 "SE556000016701;3;2020;\r\n" \
+                 "SE;EL;24,00;202,58;48,62;GOODS;\r\n" \
 
         expect(call).to eq(result)
       end
@@ -76,10 +76,10 @@ RSpec.describe MossGenerator::Stripe do
       end
 
       it 'returns a csv with same country with different vat on two rows' do
-        result = "OSS_001;\r\n"\
-                 "SE556000016701;3;2020;\r\n"\
-                 "SE;IE;23,00;204,23;46,97;GOODS;\r\n"\
-                 "SE;IE;21,00;205,79;43,22;GOODS;\r\n"\
+        result = "OSS_001;\r\n" \
+                 "SE556000016701;3;2020;\r\n" \
+                 "SE;IE;23,00;204,23;46,97;GOODS;\r\n" \
+                 "SE;IE;21,00;205,79;43,22;GOODS;\r\n" \
 
         expect(call).to eq(result)
       end
