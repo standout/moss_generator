@@ -2,6 +2,8 @@
 
 source 'https://rubygems.org'
 
+ruby '>= 2.7'
+
 # Specify your gem's dependencies in moss_generator.gemspec
 gemspec
 
@@ -9,7 +11,8 @@ gem 'rake', '~> 13.0'
 
 gem 'rspec', '~> 3.0'
 
-gem 'rubocop', '~> 1.7'
-gem 'rubocop-performance', '~> 1.9'
-gem 'rubocop-rake', '~> 0.5'
-gem 'rubocop-rspec', '~> 2.1'
+gem 'parallel', '< 2.0'
+gem 'rubocop'
+gem 'rubocop-performance'
+gem 'rubocop-rake'
+gem 'rubocop-rspec'

@@ -12,11 +12,12 @@ Gem::Specification.new do |spec|
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/standout/moss_generator'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.7')
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage
   spec.metadata['changelog_uri'] = spec.homepage
+  spec.metadata['rubygems_mfa_required'] = 'true'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added
@@ -31,10 +32,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   # spec.add_dependency to register a new dependency of your gem
+  spec.add_dependency 'base64'
+  spec.add_dependency 'bigdecimal'
   spec.add_dependency 'countries', '~> 4.0'
+  spec.add_dependency 'csv'
   spec.add_dependency 'money', '~> 6.14'
+  spec.add_dependency 'nkf'
   spec.add_dependency 'rexml', '~> 3.2'
-  spec.add_dependency 'valvat', '~> 1.1'
+  spec.add_dependency 'valvat', '~> 1.2.1'
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html

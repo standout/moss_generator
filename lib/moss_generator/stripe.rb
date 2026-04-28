@@ -56,25 +56,25 @@ module MossGenerator
     end
 
     def group_charges_rows
-      charges_rows = charges.map do |charge|
+      charges_rows = charges.filter_map do |charge|
         charge_row = MossGenerator::StripeChargeRow.new(charge, rates,
                                                         vat_rate_service)
         next if charge_row.skippable?
 
         charge_row
-      end.compact
+      end
       charges_rows.group_by do |row|
         [row.country_code, row.vat_rate]
       end
     end
 
     def build_charges_rows
-      group_charges_rows.map do |(country, vat), charges|
+      group_charges_rows.filter_map do |(country, vat), charges|
         next if country == 'SE' && turnover_country == 'SE'
         next if vat.nil?
 
         country_row(country, charges, vat)
-      end.compact
+      end
     end
 
     def country_row(country, charges, vat)
